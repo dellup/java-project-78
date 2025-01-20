@@ -3,15 +3,10 @@ package hexlet.code.schemas;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringSchema {
-    private boolean required = false;
+public class StringSchema extends BaseSchema<String> {
     private int minimLength;
-    List<String> containsList = new ArrayList<>();
+    private List<String> containsList = new ArrayList<>();
 
-    public StringSchema required() {
-        required = true;
-        return this;
-    }
     public StringSchema minLength(int length) {
         minimLength = length;
         return this;
@@ -21,10 +16,12 @@ public class StringSchema {
         return this;
     }
     public boolean isValid(String str) {
-        if (required && (str == null || str.isEmpty())) {
+        if (!super.isValid(str)) {
             return false;
-        } else if (!(required) && (str == null || str.isEmpty())) {
-            return true;
+        } else {
+            if (str == null) {
+                return true;
+            }
         }
         if (str.length() < minimLength) {
             return false;

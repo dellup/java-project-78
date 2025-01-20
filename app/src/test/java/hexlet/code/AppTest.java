@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AppTest {
     @Test
-    public void defaultTest() {
+    public void defaultTestStr() {
         var v = new Validator();
         var schema = v.string();
         var schema1 = v.string();
@@ -29,11 +29,44 @@ public class AppTest {
     }
 
     @Test
-    public void myTest() {
+    public void defaultTestNum() {
+        var v = new Validator();
+        var schema = v.number();
+
+        assertTrue(schema.isValid(5)); // true
+        assertTrue(schema.isValid(null)); // true
+        assertTrue(schema.positive().isValid(null)); // true
+
+        schema.required();
+
+        assertFalse(schema.isValid(null)); // false
+        assertTrue(schema.isValid(10)); // true
+        assertFalse(schema.isValid(-10)); // false
+        assertFalse(schema.isValid(0)); // false
+
+        schema.range(5, 10);
+
+        assertTrue(schema.isValid(5)); // true
+        assertTrue(schema.isValid(10)); // true
+        assertFalse(schema.isValid(4)); // false
+        assertFalse(schema.isValid(11)); // false
+    }
+
+    @Test
+    public void myTestStr() {
         var v = new Validator();
         var schema = v.string().minLength(3).contains("aba")
                 .minLength(8).contains("ababa");
         assertTrue(schema.isValid("ababa!!!!s"));
         assertFalse(schema.isValid("aba!Hj"));
     }
+    @Test
+    public void myTestNum() {
+        var v = new Validator();
+        var schema = v.number().positive().range(-10, 55)
+                .range(-100, 66);
+        assertFalse(schema.isValid(-80));
+        assertTrue(schema.isValid(65));
+    }
+
 }
