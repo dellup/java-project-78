@@ -1,0 +1,73 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build project
+        run: |
+          ./gradlew build
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run tests
+        run: |
+          ./gradlew test
+
+
+      # - name: Publish code coverage
+      #   uses: paambaati/codeclimate-action@v9.0.0
+      #   env:
+      #     CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      #     JACOCO_SOURCE_PATH: src/main/java
+      #   with:
+      #     coverageCommand: make report
+      #     coverageLocations: ${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
