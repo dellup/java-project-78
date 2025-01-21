@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.schemas.BaseSchema;
+import hexlet.code.schemas.StringSchema;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class AppTest {
     @Test
     public void defaultTestMap() {
         var v = new Validator();
-        var schema = v.map();
+        var schema = v.<String, String>map();
 
         assertTrue(schema.isValid(null)); // true
 
@@ -81,11 +82,11 @@ public class AppTest {
     @Test
     public void defaultTestShape() {
         var v = new Validator();
-        var schema = v.map();
+        var schema = v.<String, String>map();
 
         Map<String, BaseSchema<String>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
-        schemas.put("lastName", v.string().required().minLength(2));
+        schemas.put("lastName", ((StringSchema) v.string().required()).minLength(2));
         schema.shape(schemas);
 
         Map<String, String> human1 = new HashMap<>();

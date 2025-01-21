@@ -2,14 +2,14 @@ package hexlet.code.schemas;
 
 import java.util.Map;
 
-public class MapSchema extends BaseSchema<Map<?, ?>> {
+public class MapSchema<K, V> extends BaseSchema<Map<K, V>> {
     private int size = -1;
-    private Map<?, ? extends BaseSchema<?>> shapeMap;
+    private Map<K, BaseSchema<V>> shapeMap;
 
     public void sizeof(int sizeMap) {
         size = sizeMap;
     }
-    public boolean isValid(Map<?, ?> map) {
+    public boolean isValid(Map<K, V> map) {
         if (!super.isValid(map)) {
             return false;
         } else {
@@ -17,18 +17,20 @@ public class MapSchema extends BaseSchema<Map<?, ?>> {
                 return true;
             }
         }
+        if (shapeMap != null) {
+            for (K key : map.keySet()) {
+                BaseSchema<V> schema = shapeMap.get(key);
+                if (!schema.isValid(map.get(key))) {
+                    return false;
+                }
+            }
+        }
         if (size == -1) {
             return true;
         }
-        for (var key : shapeMap.keySet()) {
-            var schema = shapeMap.get(key);
-            if (!schema.isValid(map.get(key))) {
-                return false;
-            }
-        }
         return map.size() == size;
     }
-    public void shape(Map<?, ? extends BaseSchema<?>> map) {
+    public void shape(Map<K, BaseSchema<V>> map) {
         shapeMap = map;
     }
 }
