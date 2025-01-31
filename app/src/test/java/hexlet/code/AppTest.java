@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AppTest<K, V> {
+public class AppTest {
     Validator v;
     StringSchema schemaStr;
     NumberSchema schemaNum;
-    MapSchema<K, V> schemaMap;
+    MapSchema<String, String> schemaMap;
     @BeforeEach
     public void beforeEach() {
         v = new Validator();
@@ -119,31 +119,31 @@ public class AppTest<K, V> {
     }
     @ParameterizedTest
     @NullSource
-    public void testMapValidByDefault(Map<K, V> input) {
+    public void testMapValidByDefault(Map<String, String> input) {
         assertTrue(schemaMap.isValid(input));
     }
     @ParameterizedTest
     @NullSource
-    public void testMapValidRequired(Map<K, V> input) {
+    public void testMapValidRequired(Map<String, String> input) {
         schemaMap.required();
         assertFalse(schemaMap.isValid(input));
     }
     @ParameterizedTest
     @MethodSource("provideMapsForValidation")
-    public void testMapOfValues(Map<K, V> map, boolean expected) {
+    public void testMapOfValues(Map<String, String> map, boolean expected) {
         schemaMap.required();
         assertEquals(schemaMap.isValid(map), expected);
     }
     @ParameterizedTest
     @MethodSource("provideMapsForSizeValidation")
-    public void testMapSizeValidation(Map<K, V> map, boolean expected) {
+    public void testMapSizeValidation(Map<String, String> map, boolean expected) {
         schemaMap.required();
         schemaMap.sizeof(2);
         assertEquals(schemaMap.isValid(map), expected);
     }
     @ParameterizedTest
     @MethodSource("provideMapsForShapeValidation")
-    public void testMapShapeValidation(Map<K, V> map, boolean expected) {
+    public void testMapShapeValidation(Map<String, String> map, boolean expected) {
         var schema = v.<String, String>map();
 
         Map<String, BaseSchema<String>> schemas = new HashMap<>();
