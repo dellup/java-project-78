@@ -148,7 +148,7 @@ public class AppTest<K, V> {
 
         Map<String, BaseSchema<String>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
-        schemas.put("lastName", ((StringSchema) v.string().required()).minLength(2));
+        schemas.put("lastName", v.string().required().minLength(2));
         schema.shape(schemas);
         assertEquals(schema.isValid((Map<String, String>) map), expected);
     }

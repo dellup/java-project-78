@@ -5,6 +5,10 @@ import java.util.Map;
 public class MapSchema<K, V> extends BaseSchema<Map<K, V>> {
     private int size = -1;
     private Map<K, BaseSchema<V>> shapeMap;
+    public MapSchema<K, V> required() {
+        required = true;
+        return this;
+    }
 
     public void sizeof(int sizeMap) {
         size = sizeMap;
