@@ -1,125 +1,197 @@
 package hexlet.code;
 
 import hexlet.code.schemas.BaseSchema;
+import hexlet.code.schemas.MapSchema;
+import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AppTest {
-    @Test
-    public void defaultTestStr() {
-        var v = new Validator();
-        var schema = v.string();
-        var schema1 = v.string();
-
-        assertTrue(schema.isValid("")); // true
-        assertTrue(schema.isValid(null)); // true
-
-        schema.required();
-
-        assertFalse(schema.isValid(null)); // false
-        assertFalse(schema.isValid("")); // false
-        assertTrue(schema.isValid("what does the fox say")); // true
-        assertTrue(schema.isValid("hexlet")); // true
-        assertTrue(schema.contains("wh").isValid("what does the fox say")); // true
-        assertTrue(schema.contains("what").isValid("what does the fox say")); // true
-        assertFalse(schema.contains("whatthe").isValid("what does the fox say")); // false
-        assertFalse(schema.isValid("what does the fox say")); // false
-        assertTrue(schema1.minLength(10).minLength(4).isValid("Hexlet")); // true
+public class AppTest<K, V> {
+    Validator v;
+    StringSchema schemaStr;
+    NumberSchema schemaNum;
+    MapSchema<K, V> schemaMap;
+    @BeforeEach
+    public void beforeEach() {
+        v = new Validator();
+        schemaStr = v.string();
+        schemaNum = v.number();
+        schemaMap = v.map();
+    }
+    @ParameterizedTest
+    @NullAndEmptySource
+    public void testStrValidByDefault(String input) {
+        assertTrue(schemaStr.isValid(input));
     }
 
-    @Test
-    public void defaultTestNum() {
-        var v = new Validator();
-        var schema = v.number();
-
-        assertTrue(schema.isValid(5)); // true
-        assertTrue(schema.isValid(null)); // true
-        assertTrue(schema.positive().isValid(null)); // true
-
-        schema.required();
-
-        assertFalse(schema.isValid(null)); // false
-        assertTrue(schema.isValid(10)); // true
-        assertFalse(schema.isValid(-10)); // false
-        assertFalse(schema.isValid(0)); // false
-
-        schema.range(5, 10);
-
-        assertTrue(schema.isValid(5)); // true
-        assertTrue(schema.isValid(10)); // true
-        assertFalse(schema.isValid(4)); // false
-        assertFalse(schema.isValid(11)); // false
+    @ParameterizedTest
+    @ValueSource(strings = {"hexlet", "what does the fox say"})
+    public void testStrRequiredValid(String input) {
+        schemaStr.required();
+        assertTrue(schemaStr.isValid(input));
     }
 
-    @Test
-    public void defaultTestMap() {
-        var v = new Validator();
-        var schema = v.<String, String>map();
-
-        assertTrue(schema.isValid(null)); // true
-
-        schema.required();
-
-        assertFalse(schema.isValid(null)); // false
-        assertTrue(schema.isValid(new HashMap<>())); // true
-        var data = new HashMap<String, String>();
-        data.put("key1", "value1");
-        assertTrue(schema.isValid(data)); // true
-
-        schema.sizeof(2);
-
-        assertFalse(schema.isValid(data));  // false
-        data.put("key2", "value2");
-        assertTrue(schema.isValid(data)); // true
+    @ParameterizedTest
+    @NullAndEmptySource
+    public void testStrRequiredInvalid(String input) {
+        schemaStr.required();
+        assertFalse(schemaStr.isValid(input));
     }
 
-    @Test
-    public void defaultTestShape() {
-        var v = new Validator();
+    @ParameterizedTest
+    @CsvSource({
+        "what, what does the fox say, true",
+        "wh, what does the fox say, true",
+        "whatthe, what does the fox say, false"
+    })
+    public void testStrContains(String subStr, String input, boolean expected) {
+        schemaStr.required();
+        schemaStr.contains(subStr);
+        assertEquals(schemaStr.isValid(input), expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "10, Hexlet, false",
+        "4, Hexlet, true"
+    })
+    public void testStrMinLength(int minLength, String input, boolean expected) {
+        schemaStr.required();
+        schemaStr.minLength(minLength);
+        assertEquals(schemaStr.isValid(input), expected);
+    }
+
+    @ParameterizedTest
+    @NullSource
+    public void testNumValidByDefault(Number input) {
+        assertTrue(schemaNum.isValid(input));
+        assertTrue(schemaNum.positive().isValid(input));
+    }
+    @ParameterizedTest
+    @NullSource
+    public void testNumValidRequired(Number input) {
+        schemaNum.required();
+        assertFalse(schemaNum.isValid(input));
+    }
+    @ParameterizedTest
+    @ValueSource(ints = {5, 10})
+    public void testValidNumbersByDefault(int input) {
+        assertTrue(schemaNum.isValid(input));
+    }
+    @ParameterizedTest
+    @CsvSource({
+        "5, true",
+        "10, true",
+        "-10, false",
+        "0, false"
+    })
+    public void testRequiredNumbers(int input, boolean expected) {
+        schemaNum.required();
+        schemaNum.positive();
+        assertEquals(schemaNum.isValid(input), expected);
+    }
+    @ParameterizedTest
+    @CsvSource({
+        "5, true",
+        "10, true",
+        "4, false",
+        "11, false"
+    })
+    public void testNumberRange(int num, boolean expected) {
+        schemaNum.required();
+        schemaNum.range(5, 10);
+        assertEquals(schemaNum.isValid(num), expected);
+    }
+    @ParameterizedTest
+    @NullSource
+    public void testMapValidByDefault(Map<K, V> input) {
+        assertTrue(schemaMap.isValid(input));
+    }
+    @ParameterizedTest
+    @NullSource
+    public void testMapValidRequired(Map<K, V> input) {
+        schemaMap.required();
+        assertFalse(schemaMap.isValid(input));
+    }
+    @ParameterizedTest
+    @MethodSource("provideMapsForValidation")
+    public void testMapOfValues(Map<K, V> map, boolean expected) {
+        schemaMap.required();
+        assertEquals(schemaMap.isValid(map), expected);
+    }
+    @ParameterizedTest
+    @MethodSource("provideMapsForSizeValidation")
+    public void testMapSizeValidation(Map<K, V> map, boolean expected) {
+        schemaMap.required();
+        schemaMap.sizeof(2);
+        assertEquals(schemaMap.isValid(map), expected);
+    }
+    @ParameterizedTest
+    @MethodSource("provideMapsForShapeValidation")
+    public void testMapShapeValidation(Map<K, V> map, boolean expected) {
         var schema = v.<String, String>map();
 
         Map<String, BaseSchema<String>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
         schemas.put("lastName", ((StringSchema) v.string().required()).minLength(2));
         schema.shape(schemas);
+        assertEquals(schema.isValid((Map<String, String>) map), expected);
+    }
+    private static Stream<Arguments> provideMapsForValidation() {
+        Map<String, String> validMap = new HashMap<>();
+        validMap.put("key1", "value1");
 
+        return Stream.of(
+                Arguments.of(new HashMap<>(), true),
+                Arguments.of(validMap, true),
+                Arguments.of(null, false)
+        );
+    }
+    private static Stream<Arguments> provideMapsForSizeValidation() {
+        Map<String, String> smallMap = new HashMap<>();
+        smallMap.put("key1", "value1");
+
+        Map<String, String> validMap = new HashMap<>(smallMap);
+        validMap.put("key2", "value2");
+
+        return Stream.of(
+                Arguments.of(smallMap, false),
+                Arguments.of(validMap, true)
+        );
+    }
+    private static Stream<Arguments> provideMapsForShapeValidation() {
         Map<String, String> human1 = new HashMap<>();
         human1.put("firstName", "John");
         human1.put("lastName", "Smith");
-        assertTrue(schema.isValid(human1)); // true
 
         Map<String, String> human2 = new HashMap<>();
         human2.put("firstName", "John");
         human2.put("lastName", null);
-        assertFalse(schema.isValid(human2)); // false
 
         Map<String, String> human3 = new HashMap<>();
         human3.put("firstName", "Anna");
         human3.put("lastName", "B");
-        assertFalse(schema.isValid(human3)); // false
-    }
 
-    @Test
-    public void myTestStr() {
-        var v = new Validator();
-        var schema = v.string().minLength(3).contains("aba")
-                .minLength(8).contains("ababa");
-        assertTrue(schema.isValid("ababa!!!!s"));
-        assertFalse(schema.isValid("aba!Hj"));
-    }
-    @Test
-    public void myTestNum() {
-        var v = new Validator();
-        var schema = v.number().positive().range(-10, 55)
-                .range(-100, 66);
-        assertFalse(schema.isValid(-80));
-        assertTrue(schema.isValid(65));
+        return Stream.of(
+                Arguments.of(human1, true),
+                Arguments.of(human2, false),
+                Arguments.of(human3, false)
+        );
     }
 
 }
