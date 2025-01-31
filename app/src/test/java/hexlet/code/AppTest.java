@@ -25,7 +25,7 @@ public class AppTest {
     Validator v;
     StringSchema schemaStr;
     NumberSchema schemaNum;
-    MapSchema<String, String> schemaMap;
+    MapSchema<Object, Object> schemaMap;
     @BeforeEach
     public void beforeEach() {
         v = new Validator();
@@ -119,38 +119,38 @@ public class AppTest {
     }
     @ParameterizedTest
     @NullSource
-    public void testMapValidByDefault(Map<String, String> input) {
+    public void testMapValidByDefault(Map<Object, Object> input) {
         assertTrue(schemaMap.isValid(input));
     }
     @ParameterizedTest
     @NullSource
-    public void testMapValidRequired(Map<String, String> input) {
+    public void testMapValidRequired(Map<Object, Object> input) {
         schemaMap.required();
         assertFalse(schemaMap.isValid(input));
     }
     @ParameterizedTest
     @MethodSource("provideMapsForValidation")
-    public void testMapOfValues(Map<String, String> map, boolean expected) {
+    public void testMapOfValues(Map<Object, Object> map, boolean expected) {
         schemaMap.required();
         assertEquals(schemaMap.isValid(map), expected);
     }
     @ParameterizedTest
     @MethodSource("provideMapsForSizeValidation")
-    public void testMapSizeValidation(Map<String, String> map, boolean expected) {
+    public void testMapSizeValidation(Map<Object, Object> map, boolean expected) {
         schemaMap.required();
         schemaMap.sizeof(2);
         assertEquals(schemaMap.isValid(map), expected);
     }
     @ParameterizedTest
     @MethodSource("provideMapsForShapeValidation")
-    public void testMapShapeValidation(Map<String, String> map, boolean expected) {
-        var schema = v.<String, String>map();
+    public void testMapShapeValidation(Map<Object, Object> map, boolean expected) {
+        var schema = v.map();
 
-        Map<String, BaseSchema<String>> schemas = new HashMap<>();
+        Map<Object, BaseSchema<Object>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
-        schemas.put("lastName", v.string().required().minLength(2));
+        schemas.put("lastName", ((StringSchema) (v.string().required())).minLength(2));
         schema.shape(schemas);
-        assertEquals(schema.isValid((Map<String, String>) map), expected);
+        assertEquals(schema.isValid((Map<Object, Object>) map), expected);
     }
     private static Stream<Arguments> provideMapsForValidation() {
         Map<String, String> validMap = new HashMap<>();
