@@ -6,9 +6,6 @@ public class NumberSchema extends BaseSchema<Number> {
     private int minBorder = Integer.MIN_VALUE;
     private int maxBorder = Integer.MAX_VALUE;
 
-    public NumberSchema required() {
-        return (NumberSchema) super.required();
-    }
     public NumberSchema positive() {
         positive = true;
         return this;

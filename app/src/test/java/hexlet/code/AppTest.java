@@ -143,14 +143,14 @@ public class AppTest {
     }
     @ParameterizedTest
     @MethodSource("provideMapsForShapeValidation")
-    public void testMapShapeValidation(Map<Object, Object> map, boolean expected) {
-        var schema = v.map();
+    public void testMapShapeValidation(Map<String, String> map, boolean expected) {
+        var schema = v.<String, String>map();
 
-        Map<Object, BaseSchema<Object>> schemas = new HashMap<>();
+        Map<String, BaseSchema<String>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
-        schemas.put("lastName", ((StringSchema) (v.string().required())).minLength(2));
+        schemas.put("lastName", ((StringSchema) v.string().required()).minLength(2));
         schema.shape(schemas);
-        assertEquals(schema.isValid((Map<Object, Object>) map), expected);
+        assertEquals(schema.isValid(map), expected);
     }
     private static Stream<Arguments> provideMapsForValidation() {
         Map<String, String> validMap = new HashMap<>();

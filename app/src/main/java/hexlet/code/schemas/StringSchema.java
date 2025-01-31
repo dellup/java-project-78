@@ -3,12 +3,9 @@ package hexlet.code.schemas;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringSchema extends BaseSchema<Object> {
+public class StringSchema extends BaseSchema<String> {
     private int minimLength;
     private List<String> containsList = new ArrayList<>();
-    public StringSchema required() {
-        return (StringSchema) super.required();
-    }
     public StringSchema minLength(int length) {
         minimLength = length;
         return this;
@@ -17,7 +14,7 @@ public class StringSchema extends BaseSchema<Object> {
         containsList.add(str);
         return this;
     }
-    public boolean isValid(Object str) {
+    public boolean isValid(String str) {
         if (!super.isValid(str)) {
             return false;
         } else {
@@ -25,11 +22,11 @@ public class StringSchema extends BaseSchema<Object> {
                 return true;
             }
         }
-        if (str.toString().length() < minimLength) {
+        if (str.length() < minimLength) {
             return false;
         }
         for (String string : containsList) {
-            if (!(str.toString().contains(string))) {
+            if (!(str.contains(string))) {
                 return false;
             }
         }
