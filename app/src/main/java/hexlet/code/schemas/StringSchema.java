@@ -6,9 +6,8 @@ import java.util.List;
 public class StringSchema extends BaseSchema<Object> {
     private int minimLength;
     private List<String> containsList = new ArrayList<>();
-    public BaseSchema<Object> required() {
-        required = true;
-        return this;
+    public StringSchema required() {
+        return (StringSchema) super.required();
     }
     public StringSchema minLength(int length) {
         minimLength = length;

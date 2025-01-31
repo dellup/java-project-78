@@ -6,8 +6,7 @@ public class MapSchema<K, V> extends BaseSchema<Map<K, V>> {
     private int size = -1;
     private Map<K, BaseSchema<V>> shapeMap;
     public MapSchema<K, V> required() {
-        required = true;
-        return this;
+        return (MapSchema<K, V>) super.required();
     }
 
     public void sizeof(int sizeMap) {

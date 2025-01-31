@@ -7,8 +7,7 @@ public class NumberSchema extends BaseSchema<Number> {
     private int maxBorder = Integer.MAX_VALUE;
 
     public NumberSchema required() {
-        required = true;
-        return this;
+        return (NumberSchema) super.required();
     }
     public NumberSchema positive() {
         positive = true;
