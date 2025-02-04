@@ -1,6 +1,6 @@
 package hexlet.code.schemas;
 
-public class NumberSchema extends BaseSchema<Number> {
+public final class NumberSchema extends BaseSchema<Number> {
 
     private boolean positive = false;
     private int minBorder = Integer.MIN_VALUE;

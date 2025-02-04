@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AppTest {
-    Validator v;
-    StringSchema schemaStr;
-    NumberSchema schemaNum;
-    MapSchema schemaMap;
+public final class AppTest {
+    private Validator v;
+    private StringSchema schemaStr;
+    private NumberSchema schemaNum;
+    private MapSchema schemaMap;
     @BeforeEach
     public void beforeEach() {
         v = new Validator();

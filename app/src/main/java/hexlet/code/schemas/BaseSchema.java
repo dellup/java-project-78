@@ -1,7 +1,7 @@
 package hexlet.code.schemas;
 
 public abstract class BaseSchema<T> {
-    boolean required = false;
+    protected boolean required = false;
     public abstract BaseSchema<T> required();
     public boolean isValid(T value) {
         if (required && (value == null || value.toString().isEmpty())) {
