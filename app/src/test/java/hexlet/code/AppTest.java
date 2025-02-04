@@ -25,7 +25,7 @@ public class AppTest {
     Validator v;
     StringSchema schemaStr;
     NumberSchema schemaNum;
-    MapSchema<Object, Object> schemaMap;
+    MapSchema schemaMap;
     @BeforeEach
     public void beforeEach() {
         v = new Validator();
