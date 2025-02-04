@@ -144,11 +144,11 @@ public final class AppTest {
     @ParameterizedTest
     @MethodSource("provideMapsForShapeValidation")
     public void testMapShapeValidation(Map<String, String> map, boolean expected) {
-        var schema = v.<String, String>map();
+        var schema = v.map();
 
         Map<String, BaseSchema<String>> schemas = new HashMap<>();
         schemas.put("firstName", v.string().required());
-        schemas.put("lastName", ((StringSchema) v.string().required()).minLength(2));
+        schemas.put("lastName", (v.string().required()).minLength(2));
         schema.shape(schemas);
         assertEquals(schema.isValid(map), expected);
     }
