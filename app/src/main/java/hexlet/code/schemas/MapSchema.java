@@ -9,6 +9,10 @@ public class MapSchema extends BaseSchema<Map<?, ?>> {
     public void sizeof(int sizeMap) {
         size = sizeMap;
     }
+    public MapSchema required() {
+        required = true;
+        return this;
+    }
     public boolean isValid(Map<?, ?> map) {
         if (!super.isValid(map)) {
             return false;

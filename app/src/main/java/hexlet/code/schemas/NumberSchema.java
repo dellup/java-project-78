@@ -10,6 +10,10 @@ public class NumberSchema extends BaseSchema<Number> {
         positive = true;
         return this;
     }
+    public NumberSchema required() {
+        required = true;
+        return this;
+    }
     public NumberSchema range(int minimBorder, int maximBorder) {
         minBorder = minimBorder;
         maxBorder = maximBorder;

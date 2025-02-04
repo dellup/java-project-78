@@ -14,6 +14,10 @@ public class StringSchema extends BaseSchema<String> {
         containsList.add(str);
         return this;
     }
+    public StringSchema required() {
+        required = true;
+        return this;
+    }
     public boolean isValid(String str) {
         if (!super.isValid(str)) {
             return false;
