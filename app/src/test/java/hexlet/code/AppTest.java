@@ -26,6 +26,7 @@ public final class AppTest {
     private StringSchema schemaStr;
     private NumberSchema schemaNum;
     private MapSchema schemaMap;
+    
     @BeforeEach
     public void beforeEach() {
         v = new Validator();
@@ -33,6 +34,7 @@ public final class AppTest {
         schemaNum = v.number();
         schemaMap = v.map();
     }
+
     @ParameterizedTest
     @NullAndEmptySource
     public void testStrValidByDefault(String input) {
@@ -43,6 +45,7 @@ public final class AppTest {
     @ValueSource(strings = {"hexlet", "what does the fox say"})
     public void testStrRequiredValid(String input) {
         schemaStr.required();
+
         assertTrue(schemaStr.isValid(input));
     }
 
@@ -50,6 +53,7 @@ public final class AppTest {
     @NullAndEmptySource
     public void testStrRequiredInvalid(String input) {
         schemaStr.required();
+
         assertFalse(schemaStr.isValid(input));
     }
 
@@ -62,6 +66,7 @@ public final class AppTest {
     public void testStrContains(String subStr, String input, boolean expected) {
         schemaStr.required();
         schemaStr.contains(subStr);
+
         assertEquals(schemaStr.isValid(input), expected);
     }
 
@@ -73,6 +78,7 @@ public final class AppTest {
     public void testStrMinLength(int minLength, String input, boolean expected) {
         schemaStr.required();
         schemaStr.minLength(minLength);
+
         assertEquals(schemaStr.isValid(input), expected);
     }
 
@@ -82,17 +88,21 @@ public final class AppTest {
         assertTrue(schemaNum.isValid(input));
         assertTrue(schemaNum.positive().isValid(input));
     }
+
     @ParameterizedTest
     @NullSource
     public void testNumValidRequired(Number input) {
         schemaNum.required();
+
         assertFalse(schemaNum.isValid(input));
     }
+
     @ParameterizedTest
     @ValueSource(ints = {5, 10})
     public void testValidNumbersByDefault(int input) {
         assertTrue(schemaNum.isValid(input));
     }
+
     @ParameterizedTest
     @CsvSource({
         "5, true",
@@ -103,8 +113,10 @@ public final class AppTest {
     public void testRequiredNumbers(int input, boolean expected) {
         schemaNum.required();
         schemaNum.positive();
+
         assertEquals(schemaNum.isValid(input), expected);
     }
+
     @ParameterizedTest
     @CsvSource({
         "5, true",
@@ -115,32 +127,41 @@ public final class AppTest {
     public void testNumberRange(int num, boolean expected) {
         schemaNum.required();
         schemaNum.range(5, 10);
+
         assertEquals(schemaNum.isValid(num), expected);
     }
+
     @ParameterizedTest
     @NullSource
     public void testMapValidByDefault(Map<Object, Object> input) {
         assertTrue(schemaMap.isValid(input));
     }
+
     @ParameterizedTest
     @NullSource
     public void testMapValidRequired(Map<Object, Object> input) {
         schemaMap.required();
+
         assertFalse(schemaMap.isValid(input));
     }
+
     @ParameterizedTest
     @MethodSource("provideMapsForValidation")
     public void testMapOfValues(Map<Object, Object> map, boolean expected) {
         schemaMap.required();
+
         assertEquals(schemaMap.isValid(map), expected);
     }
+
     @ParameterizedTest
     @MethodSource("provideMapsForSizeValidation")
     public void testMapSizeValidation(Map<Object, Object> map, boolean expected) {
         schemaMap.required();
         schemaMap.sizeof(2);
+
         assertEquals(schemaMap.isValid(map), expected);
     }
+
     @ParameterizedTest
     @MethodSource("provideMapsForShapeValidation")
     public void testMapShapeValidation(Map<String, String> map, boolean expected) {
@@ -150,6 +171,7 @@ public final class AppTest {
         schemas.put("firstName", v.string().required());
         schemas.put("lastName", (v.string().required()).minLength(2));
         schema.shape(schemas);
+
         assertEquals(schema.isValid(map), expected);
     }
     private static Stream<Arguments> provideMapsForValidation() {
@@ -162,6 +184,7 @@ public final class AppTest {
                 Arguments.of(null, false)
         );
     }
+
     private static Stream<Arguments> provideMapsForSizeValidation() {
         Map<String, String> smallMap = new HashMap<>();
         smallMap.put("key1", "value1");
@@ -174,6 +197,7 @@ public final class AppTest {
                 Arguments.of(validMap, true)
         );
     }
+
     private static Stream<Arguments> provideMapsForShapeValidation() {
         Map<String, String> human1 = new HashMap<>();
         human1.put("firstName", "John");
@@ -193,5 +217,4 @@ public final class AppTest {
                 Arguments.of(human3, false)
         );
     }
-
 }
