@@ -26,7 +26,6 @@ public final class AppTest {
     private StringSchema schemaStr;
     private NumberSchema schemaNum;
     private MapSchema schemaMap;
-    
     @BeforeEach
     public void beforeEach() {
         v = new Validator();
